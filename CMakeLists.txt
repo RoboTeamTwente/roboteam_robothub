@@ -40,21 +40,3 @@ target_link_libraries(roboteam_robothub
         PRIVATE roboteam_utils
         PRIVATE Qt5::Network
         )
-
-
-
-#add_test(robothub_tests
-#    ${SRCS}
-#    test/main.cpp
-#    test/packing.cpp
-#    )
-
-#target_compile_options(robothub_tests PUBLIC --coverage)
-
-
-#target_link_libraries(robothub_tests ${QT_LIBRARIES} roboteam_proto gcov)
-#
-#include(CodeCoverage)
-#APPEND_COVERAGE_COMPILER_FLAGS()
-#SETUP_TARGET_FOR_COVERAGE_LCOV(NAME ${PROJECT_NAME}_coverage EXECUTABLE robothub_tests)
-
