@@ -6,6 +6,7 @@
 #include "RobotHub.h"
 #include "SerialDeviceManager.h"
 #include "GRSim.h"
+#include "MimirCommander.h"
 #include "packing.h"
 #include "constants.h"
 
@@ -15,6 +16,7 @@ namespace robothub {
 RobotHub::RobotHub() {
     grsimCommander = std::make_shared<GRSimCommander>();
 
+    mimirCommander= std::make_shared<MimirCommander>();
 #ifdef __APPLE__
     device = std::make_shared<SerialDeviceManager>("/dev/cu.usbmodem00000000001A1");
 #else
@@ -76,7 +78,8 @@ void RobotHub::processRobotCommand(roboteam_proto::RobotCommand & cmd) {
     if (mode == utils::Mode::SERIAL) {
         sendSerialCommand(llrc);
     } else {
-        sendGrSimCommand(cmd);
+        //sendGrSimCommand(cmd);
+        sendMimirCommand(cmd);
     }
 }
 
@@ -109,6 +112,9 @@ void RobotHub::sendGrSimCommand(const roboteam_proto::RobotCommand& robotCommand
     this->grsimCommander->queueGRSimCommand(robotCommand);
 }
 
+void RobotHub::sendMimirCommand(const roboteam_proto::RobotCommand& robotCommand){
+    mimirCommander->sendCommand(robotCommand);
+}
 void RobotHub::publishRobotFeedback(LowLevelRobotFeedback llrf) {
     if (llrf.id >= 0 && llrf.id < 16) {
         publisher->send(rtt::TOPIC_FEEDBACK, toRobotFeedback(llrf).SerializeAsString());
@@ -119,6 +125,11 @@ void RobotHub::processSettings(roboteam_proto::Setting &setting) {
     grsimCommander->setColor(setting.isyellow());
     grsimCommander->setGrsim_ip(setting.robothubsendip());
     grsimCommander->setGrsim_port(setting.robothubsendport());
+
+    mimirCommander->setColor(setting.isyellow());
+    mimirCommander->setIP(setting.robothubsendip());
+    mimirCommander->setPort(setting.robothubsendport());
+
     isLeft = setting.isleft();
 
     if (setting.serialmode()) {

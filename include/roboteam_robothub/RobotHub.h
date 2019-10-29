@@ -17,6 +17,7 @@ namespace rtt {
 namespace robothub {
 
 class GRSimCommander;
+class MimirCommander;
 class SerialDeviceManager;
 class RobotHub {
 public:
@@ -47,9 +48,11 @@ private:
     // Serial and grsim managers
     std::shared_ptr<SerialDeviceManager> device;
     std::shared_ptr<GRSimCommander> grsimCommander;
+    std::shared_ptr<MimirCommander> mimirCommander;
 
     void sendSerialCommand(LowLevelRobotCommand llrc);
     void sendGrSimCommand(const roboteam_proto::RobotCommand& robotCommand);
+    void sendMimirCommand(const roboteam_proto::RobotCommand& robotCommand);
     void publishRobotFeedback(LowLevelRobotFeedback llrf);
     int robotTicks[MAX_AMOUNT_OF_ROBOTS] = {};
     void printStatistics();

@@ -27,7 +27,7 @@ add_executable(roboteam_robothub
         src/GRSim.cpp
         src/SerialDeviceManager.cpp
         src/RobotHub.cpp
-        src/main.cpp)
+        src/main.cpp src/MimirCommander.cpp include/roboteam_robothub/MimirCommander.h)
 
 
 target_include_directories(roboteam_robothub
