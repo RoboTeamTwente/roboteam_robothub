@@ -41,7 +41,7 @@ void MimirCommander::convertCommand(const roboteam_proto::RobotCommand &robotCom
 
     mimirCommand.mutable_globalvel()->set_velx(robotCommand.vel().x());
     mimirCommand.mutable_globalvel()->set_vely(robotCommand.vel().y());
-    mimirCommand.mutable_globalvel()->set_angle(robotCommand.w());
+    mimirCommand.mutable_globalvel()->set_anglevel(robotCommand.w());
     //TODO: fix angle/angular velocity stuff
 }
 }
