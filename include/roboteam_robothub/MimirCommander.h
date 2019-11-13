@@ -22,9 +22,9 @@ class MimirCommander {
         void setColor(bool isYellow);
         void setIP(const std::string &mimirIP);
         void setPort(quint16 port);
-        bool sendCommand(const roboteam_proto::RobotCommand& robotCommand);
+        bool sendCommand(const proto::RobotCommand& robotCommand);
     private:
-        void convertCommand(const roboteam_proto::RobotCommand& robotCommand,roboteam_proto::mimir_robotcommand &mimirCommand);
+        void convertCommand(const proto::RobotCommand& robotCommand,proto::mimir_robotcommand &mimirCommand);
         QUdpSocket udpsocket;
         std::string sendIP = "127.0.0.1";
         quint16 sendPort = 10004;

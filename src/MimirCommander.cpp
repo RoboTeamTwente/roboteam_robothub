@@ -16,8 +16,8 @@ void MimirCommander::setIP(const std::string &mimirIP) {
 void MimirCommander::setPort(quint16 port) {
     sendPort=port;
 }
-bool MimirCommander::sendCommand(const roboteam_proto::RobotCommand &robotCommand) {
-    roboteam_proto::mimir_robotcommand packet;
+bool MimirCommander::sendCommand(const proto::RobotCommand &robotCommand) {
+    proto::mimir_robotcommand packet;
     convertCommand(robotCommand,packet);
     QByteArray dgram;
     dgram.resize(packet.ByteSizeLong());
@@ -31,7 +31,7 @@ bool MimirCommander::sendCommand(const roboteam_proto::RobotCommand &robotComman
     return sentBytes==dgram.size();
 }
 
-void MimirCommander::convertCommand(const roboteam_proto::RobotCommand &robotCommand, roboteam_proto::mimir_robotcommand &mimirCommand) {
+void MimirCommander::convertCommand(const proto::RobotCommand &robotCommand, proto::mimir_robotcommand &mimirCommand) {
     mimirCommand.set_id(robotCommand.id());
     mimirCommand.set_teamisyellow(weAreYellow);
     //TODO: fix kicker commands
