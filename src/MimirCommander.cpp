@@ -39,9 +39,12 @@ void MimirCommander::convertCommand(const proto::RobotCommand &robotCommand, pro
     mimirCommand.mutable_kicker()->set_genevaangle(robotCommand.geneva_state());
     mimirCommand.mutable_kicker()->set_kickchippower(robotCommand.chip_kick_vel());
 
+//    mimirCommand.mutable_robotvel()->set_veltangent(robotCommand.vel().x());
+//    mimirCommand.mutable_robotvel()->set_velnormal(robotCommand.vel().y());
+//    mimirCommand.mutable_robotvel()->set_velangle(0);
     mimirCommand.mutable_globalvel()->set_velx(robotCommand.vel().x());
     mimirCommand.mutable_globalvel()->set_vely(robotCommand.vel().y());
-    mimirCommand.mutable_globalvel()->set_anglevel(robotCommand.w());
+    mimirCommand.mutable_globalvel()->set_anglevel(0.05);
     //TODO: fix angle/angular velocity stuff
 }
 }
