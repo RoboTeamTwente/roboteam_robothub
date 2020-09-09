@@ -5,9 +5,9 @@
 #include <chrono>
 #include <string>
 
-#include "roboteam_proto/RobotCommand.pb.h"
-#include "roboteam_proto/grSim_Commands.pb.h"
-#include "roboteam_proto/grSim_Packet.pb.h"
+#include <networking/RobotCommand.pb.h>
+#include <networking/grSim_Commands.pb.h>
+#include <networking/grSim_Packet.pb.h>
 
 namespace rtt {
 namespace robothub {

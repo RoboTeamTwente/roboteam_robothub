@@ -9,7 +9,7 @@
 #include <iostream>
 #include <string>
 #include "packing.h"
-#include "roboteam_proto/World.pb.h"
+#include <networking/World.pb.h>
 
 namespace rtt {
 namespace robothub {

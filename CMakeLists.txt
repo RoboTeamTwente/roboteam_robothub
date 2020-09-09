@@ -7,7 +7,7 @@ SET(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake_modules")
 
 include(ccache)
 
-set(CMAKE_CXX_FLAGS "-std=c++17 ${CMAKE_CXX_FLAGS} -O3")
+set(CMAKE_CXX_FLAGS "-std=c++20 ${CMAKE_CXX_FLAGS} -O3")
 
 # for MacOS X or iOS, watchOS, tvOS (since 3.10.3)
 if(APPLE)

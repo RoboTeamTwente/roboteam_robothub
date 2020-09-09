@@ -9,7 +9,7 @@
 #include <roboteam_proto/Subscriber.h>
 #include <string>
 #include "constants.h"
-#include "roboteam_proto/Setting.pb.h"
+#include <networking/Setting.pb.h>
 #include "utilities.h"
 
 namespace rtt {
