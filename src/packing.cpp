@@ -41,7 +41,7 @@ LowLevelRobotCommand createLowLevelRobotCommand(const proto::RobotCommand& comma
     llrc.do_kick = command.kicker();                                            // [0, 1]          {true, false}
     llrc.do_chip = command.chipper();                                           // [0, 1]          {true, false}
     llrc.kick_chip_forced = command.chip_kick_forced();                         // [0, 1] {true, false}
-    llrc.kick_chip_power = static_cast<int>(floor(kick_chip_power * 255 / 6.5));  // [0, 255]        [0, 100]%
+    llrc.kick_chip_power = static_cast<int>(floor(kick_chip_power * 255 / 8));  // [0, 255]        [0, 100]%
     llrc.velocity_dribbler = command.dribbler();                                // [0, 31]        [0, 100]%
 
     llrc.geneva_drive_state = command.geneva_state();  // [(0)1, 5]       [-2, 2]
