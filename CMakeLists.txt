@@ -19,17 +19,19 @@ endif()
 find_package(Qt5Network REQUIRED)
 
 add_executable(roboteam_robothub
-        src/packing.cpp
         src/GRSim.cpp
         src/SerialDeviceManager.cpp
         src/RobotHub.cpp
-        src/main.cpp)
+        src/main.cpp
+        src/Packing.cpp )
 
 
 target_include_directories(roboteam_robothub
         INTERFACE include
         PRIVATE include/roboteam_robothub
-        PRIVATE src )
+        PRIVATE src
+        PRIVATE roboteam_embedded_messages/include
+        )
 
 target_link_libraries(roboteam_robothub
         PUBLIC roboteam_proto

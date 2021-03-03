@@ -5,7 +5,7 @@
 #include "GRSim.h"
 #include "RobotHub.h"
 #include "SerialDeviceManager.h"
-#include "packing.h"
+#include "Packing.h"
 
 namespace rtt::robothub {
 
@@ -58,7 +58,7 @@ void RobotHub::processAIBatch(proto::AICommand &cmd) {
   proto::RobotData sentCommands;
   sentCommands.set_isyellow(isYellow);
   for(const auto& command : cmd.commands()){
-    bool wasSent =processCommand(command,cmd.extrapolatedworld());
+    bool wasSent = processCommand(command,cmd.extrapolatedworld());
     if(wasSent){
       proto::RobotCommand * sent = sentCommands.mutable_sentcommands()->Add();
       sent->CopyFrom(command);
@@ -69,42 +69,27 @@ void RobotHub::processAIBatch(proto::AICommand &cmd) {
 
 }
 bool RobotHub::processCommand(const proto::RobotCommand &robotCommand,const proto::World &world) {
-    LowLevelRobotCommand llrc = createLowLevelRobotCommand(robotCommand, world, isYellow);
-
-    // check if the command is valid, otherwise don't send anything
-    if (!validateRobotPacket(llrc)) {
-        std::cout << "[processRobotCommand] LowLevelRobotCommand is not valid "
-                     "for our robots, no command is being sent!"
-                  << std::endl;
-        printLowLevelRobotCommand(llrc);
-        return false;
-    }
 
     robotTicks[robotCommand.id()]++;
     if (mode == utils::Mode::SERIAL) {
-        return sendSerialCommand(llrc);
+        RobotCommandPayload payload = createLowLevelCommand(robotCommand,world,isYellow);
+        return sendSerialCommand(payload);
     } else {
         return sendGrSimCommand(robotCommand);
     }
 }
 /// send a serial command from a given robotcommand
-bool RobotHub::sendSerialCommand(LowLevelRobotCommand llrc) {
+bool RobotHub::sendSerialCommand(RobotCommandPayload payload) {
     // convert the LLRC to a bytestream which we can send
-    std::shared_ptr<packed_protocol_message> bytestream = createRobotPacket(llrc);
 
     if (!device->ensureDeviceOpen()) {
         device->openDevice();
     }
 
-    // Check if the message was created successfully
-    if (!bytestream) {
-        std::cout << "[sendSerialCommand] The message was not created succesfully!" << std::endl;
-        return false;
-    }
-    packed_protocol_message packet = *bytestream;
-    device->writeToDevice(packet);
-    if (device->getMostRecentFeedback()) {
-        publishRobotFeedback(createRobotFeedback(*device->getMostRecentFeedback()));
+    device->writeToDevice(payload);
+    std::optional<RobotFeedbackPayload> feedback_payload= device->getMostRecentFeedback();
+    if (feedback_payload) {
+        publishRobotFeedback(feedback_payload.value());
         device->removeMostRecentFeedback();
     }
     return true;
@@ -116,11 +101,12 @@ bool RobotHub::sendGrSimCommand(const proto::RobotCommand &robotCommand) {
   return true;
 }
 
-void RobotHub::publishRobotFeedback(LowLevelRobotFeedback llrf) {
-    if (llrf.id >= 0 && llrf.id < 16) {
+void RobotHub::publishRobotFeedback(RobotFeedbackPayload llrf) {
+     proto::RobotFeedback feedback = feedbackFromRaw(&llrf);
+    if (feedback.id() >= 0 && feedback.id() < 16) {
         proto::RobotData data;
-        proto::RobotFeedback * feedback = data.mutable_receivedfeedback()->Add();
-        feedback->CopyFrom(toRobotFeedback(llrf));
+        proto::RobotFeedback * data_feedback = data.mutable_receivedfeedback()->Add();
+        data_feedback->CopyFrom(feedback);
         data.set_isyellow(isYellow);
         feedbackPublisher->send(data);
     }

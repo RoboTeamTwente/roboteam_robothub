@@ -9,8 +9,7 @@
 #include <iostream>
 #include "utilities.h"
 
-namespace rtt {
-namespace robothub {
+namespace rtt::robothub {
 
 SerialDeviceManager::SerialDeviceManager(const std::string& deviceName) : deviceName(deviceName) {}
 
@@ -19,17 +18,17 @@ bool SerialDeviceManager::ensureDeviceOpen() { return fileID != 0; }
 /*
  * Write an array to the serial device
  */
-bool SerialDeviceManager::writeToDevice(const packed_protocol_message packet) {
+bool SerialDeviceManager::writeToDevice(const RobotCommandPayload& packet) {
     if (!iswriting) {
         if (this->ensureDeviceOpen()) {
             iswriting = true;
-            auto result = write(fileID, packet.data(), packet.size());
+            auto result = write(fileID, packet.payload, PACKET_SIZE_ROBOT_COMMAND);
             if (result == -1) {
                 std::cerr << "write to device failing" << std::endl;
             }
             auto feedbackPacket = readDevice();
-            if (feedbackPacket != nullptr) {
-                mostRecentFeedback = std::move(feedbackPacket);
+            if (feedbackPacket != std::nullopt) {
+                mostRecentFeedback = feedbackPacket;
             }
             iswriting = false;
         }
@@ -76,23 +75,20 @@ void SerialDeviceManager::openDevice() {
     }
 }
 
-std::shared_ptr<packed_robot_feedback> SerialDeviceManager::readDevice() {
+std::optional<RobotFeedbackPayload> SerialDeviceManager::readDevice() {
     if (this->ensureDeviceOpen()) {
-        packed_robot_feedback packet;
-        auto result = read(fileID, packet.data(), packet.size());
-
+        RobotFeedbackPayload packet;
+        auto result = read(fileID, packet.payload, PACKET_SIZE_ROBOT_FEEDBACK);
         if (result == -1) {  //|| result != 8) {
             std::cerr << "read from device failing" << std::endl;
         } else if (result == 8) {
-            return std::make_shared<packed_robot_feedback>(packet);
+            return packet;
         }
     }
-    return nullptr;
+    return std::nullopt;
 }
-std::shared_ptr<packed_robot_feedback> SerialDeviceManager::getMostRecentFeedback() const { return mostRecentFeedback; }
+std::optional<RobotFeedbackPayload> SerialDeviceManager::getMostRecentFeedback() const { return mostRecentFeedback; }
 
-void SerialDeviceManager::removeMostRecentFeedback() { mostRecentFeedback = nullptr; }
-
-}  // namespace robothub
+void SerialDeviceManager::removeMostRecentFeedback() { mostRecentFeedback = std::nullopt; }
 
 }  // namespace rtt

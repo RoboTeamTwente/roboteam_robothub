@@ -14,6 +14,8 @@
 
 #include "constants.h"
 #include "utilities.h"
+#include "RobotCommand.h"
+#include "RobotFeedback.h"
 
 namespace rtt::robothub {
 
@@ -58,9 +60,9 @@ class RobotHub {
     std::shared_ptr<SerialDeviceManager> device;
     std::shared_ptr<GRSimCommander> grsimCommander;
 
-    bool sendSerialCommand(LowLevelRobotCommand llrc);
+    bool sendSerialCommand(RobotCommandPayload payload );
     bool sendGrSimCommand(const proto::RobotCommand &robotCommand);
-    void publishRobotFeedback(LowLevelRobotFeedback llrf);
+    void publishRobotFeedback(RobotFeedbackPayload feedback);
     int robotTicks[MAX_AMOUNT_OF_ROBOTS] = {};
     void printStatistics();
     std::mutex worldLock;

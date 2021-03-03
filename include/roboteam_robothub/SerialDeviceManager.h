@@ -6,7 +6,7 @@
 #define ROBOTEAM_ROBOTHUB_SERIALDEVICEMANAGER_H
 
 #include <fstream>
-#include "packing.h"
+#include "Packing.h"
 
 namespace rtt {
 namespace robothub {
@@ -16,11 +16,11 @@ class SerialDeviceManager {
     explicit SerialDeviceManager() = default;
     explicit SerialDeviceManager(const std::string &deviceName);
     bool ensureDeviceOpen();
-    bool writeToDevice(packed_protocol_message packet);
+    bool writeToDevice(const RobotCommandPayload& command);
     void openDevice();
-    std::shared_ptr<packed_robot_feedback> readDevice();
-    std::shared_ptr<packed_robot_feedback> mostRecentFeedback = nullptr;
-    std::shared_ptr<packed_robot_feedback> getMostRecentFeedback() const;
+    std::optional<RobotFeedbackPayload> readDevice();
+    std::optional<RobotFeedbackPayload> mostRecentFeedback = std::nullopt;
+    [[nodiscard]] std::optional<RobotFeedbackPayload> getMostRecentFeedback() const;
     void removeMostRecentFeedback();
 
    private:
