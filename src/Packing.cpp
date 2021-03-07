@@ -6,7 +6,7 @@
 #include "utilities.h"
 #include <cmath>
 
-RobotCommandPayload createLowLevelCommand(const proto::RobotCommand& proto,  const proto::World& world, bool isYellow){
+RobotCommandPayload createEmbeddedCommand(const proto::RobotCommand& proto, const proto::World& world, bool isYellow){
   float rho = sqrtf(proto.vel().x() * proto.vel().x() + proto.vel().y() * proto.vel().y());
   float theta = atan2f(proto.vel().y(), proto.vel().x());
   auto bot = rtt::robothub::utils::getWorldBot(proto.id(),isYellow,world);

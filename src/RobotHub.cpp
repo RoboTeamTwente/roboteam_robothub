@@ -72,7 +72,7 @@ bool RobotHub::processCommand(const proto::RobotCommand &robotCommand,const prot
 
     robotTicks[robotCommand.id()]++;
     if (mode == utils::Mode::SERIAL) {
-        RobotCommandPayload payload = createLowLevelCommand(robotCommand,world,isYellow);
+        RobotCommandPayload payload = createEmbeddedCommand(robotCommand, world, isYellow);
         return sendSerialCommand(payload);
     } else {
         return sendGrSimCommand(robotCommand);

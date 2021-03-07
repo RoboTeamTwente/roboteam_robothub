@@ -10,9 +10,7 @@
 #include <roboteam_proto/World.pb.h>
 #include <roboteam_proto/RobotFeedback.pb.h>
 
-//using packed_protocol_message = std::array<uint8_t, 10>;
-//using packed_robot_feedback = std::array<uint8_t, 8>;
-RobotCommandPayload createLowLevelCommand(const proto::RobotCommand& proto,  const proto::World& world, bool isYellow);
+RobotCommandPayload createEmbeddedCommand(const proto::RobotCommand& proto, const proto::World& world, bool isYellow);
 
 proto::RobotFeedback feedbackFromRaw(RobotFeedbackPayload * payload);
 #endif //RTT_ROBOTEAM_ROBOTHUB_SRC_PACKING_H_
