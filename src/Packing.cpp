@@ -25,7 +25,7 @@ RobotCommandPayload createEmbeddedCommand(const proto::RobotCommand& proto, cons
 
   if(bot){
     command.useCameraAngle = true;
-    command.cameraAngle = bot->w();
+    command.cameraAngle = bot->angle();
   }else{
     command.useCameraAngle = false;
     command.cameraAngle = 0.0;

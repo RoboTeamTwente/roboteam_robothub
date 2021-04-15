@@ -4,7 +4,7 @@ project(roboteam_robothub)
 # Needed for the documentation generator.
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
-set(CMAKE_CXX_FLAGS "-std=c++17 ${CMAKE_CXX_FLAGS} -O3")
+set(CMAKE_CXX_FLAGS "-std=c++17 ${CMAKE_CXX_FLAGS}")
 
 # for MacOS X or iOS, watchOS, tvOS (since 3.10.3)
 if(APPLE)
