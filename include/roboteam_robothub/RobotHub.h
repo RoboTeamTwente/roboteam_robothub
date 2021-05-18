@@ -63,7 +63,8 @@ class RobotHub {
     bool sendSerialCommand(RobotCommandPayload payload );
     bool sendGrSimCommand(const proto::RobotCommand &robotCommand);
     void publishRobotFeedback(RobotFeedbackPayload feedback);
-    int robotTicks[MAX_AMOUNT_OF_ROBOTS] = {};
+    int robotTicksCommand[MAX_AMOUNT_OF_ROBOTS] = {};
+    int robotTicksFeedback[MAX_AMOUNT_OF_ROBOTS] = {};
     void printStatistics();
     std::mutex worldLock;
 };

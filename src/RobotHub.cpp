@@ -15,7 +15,8 @@ RobotHub::RobotHub() {
 #ifdef __APPLE__
     device = std::make_shared<SerialDeviceManager>("/dev/cu.usbmodem00000000001A1");
 #else
-    device = std::make_shared<SerialDeviceManager>("/dev/serial/by-id/usb-RTT_BaseStation_00000000001A-if00");
+//    device = std::make_shared<SerialDeviceManager>("/dev/serial/by-id/usb-RTT_BaseStation_00000000001A-if00");
+    device = std::make_shared<SerialDeviceManager>("/dev/serial/by-id/usb-RTT_BaseStation_3167345F3038-if00");
 #endif
 }
 
@@ -46,8 +47,8 @@ void RobotHub::printStatistics() {
         for (int j = 0; j < amountOfColumns; j++) {
             const int robotId = i + j;
             if (robotId < MAX_AMOUNT_OF_ROBOTS) {
-                std::cout << robotId << ": " << robotTicks[robotId] << "\t";
-                robotTicks[robotId] = 0;
+                std::cout << robotId << ": " << robotTicksCommand[robotId] << "|" << robotTicksFeedback[robotId] << "\t";
+                robotTicksCommand[robotId] = 0;
             }
         }
         std::cout << std::endl;
@@ -70,7 +71,7 @@ void RobotHub::processAIBatch(proto::AICommand &cmd) {
 }
 bool RobotHub::processCommand(const proto::RobotCommand &robotCommand,const proto::World &world) {
 
-    robotTicks[robotCommand.id()]++;
+    robotTicksCommand[robotCommand.id()]++;
     if (mode == utils::Mode::SERIAL) {
         RobotCommandPayload payload = createEmbeddedCommand(robotCommand, world, isYellow);
         return sendSerialCommand(payload);
@@ -90,6 +91,7 @@ bool RobotHub::sendSerialCommand(RobotCommandPayload payload) {
     std::optional<RobotFeedbackPayload> feedback_payload= device->getMostRecentFeedback();
     if (feedback_payload) {
         publishRobotFeedback(feedback_payload.value());
+        robotTicksCommand[RobotFeedback_get_id( &(feedback_payload.value()) )]++;
         device->removeMostRecentFeedback();
     }
     return true;
