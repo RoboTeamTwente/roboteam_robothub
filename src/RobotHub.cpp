@@ -15,7 +15,7 @@ RobotHub::RobotHub() {
     if (!this->subscribe()) {
         throw FailedToInitializeNetworkersException();
     }
-    
+
     this->mode = utils::RobotHubMode::NEITHER;
     std::cout << "[RobotHub]: Starting with default mode of: " << utils::modeToString(this->mode) << std::endl;
 
@@ -38,11 +38,14 @@ bool RobotHub::subscribe() {
     auto settingsCallback = std::bind(&RobotHub::onSettings, this, std::placeholders::_1);
     this->settingsSubscriber = std::make_unique<rtt::net::SettingsSubscriber>(settingsCallback);
 
+    auto worldCallback = std::bind(&RobotHub::onWorld, this, std::placeholders::_1);
+    this->worldSubscriber = std::make_unique<rtt::net::WorldSubscriber>(worldCallback);
+
     this->robotFeedbackPublisher = std::make_unique<rtt::net::RobotFeedbackPublisher>();
 
     // All networkers should not be a nullptr
     return this->robotCommandsBlueSubscriber != nullptr && this->robotCommandsYellowSubscriber != nullptr && this->settingsSubscriber != nullptr &&
-           this->robotFeedbackPublisher != nullptr;
+           this->worldSubscriber != nullptr && this->robotFeedbackPublisher != nullptr;
 }
 
 void RobotHub::sendCommandsToSimulator(const proto::AICommand &commands, bool toTeamYellow) {
@@ -144,6 +147,8 @@ void RobotHub::onSettings(const proto::Setting &settings) {
 
     this->mode = newMode;
 }
+
+void RobotHub::onWorld(const proto::State &world) { this->world = world.last_seen_world(); }
 
 /* Unsafe function that can cause data races in commands_sent and feedback_received,
     as it is updated from multiple threads without guards. This should not matter

@@ -52,6 +52,8 @@ class RobotHub {
 
     void onSettings(const proto::Setting &setting);
 
+    void onWorld(const proto::State &world);
+
     void handleRobotFeedbackFromSimulator(const simulation::RobotControlFeedback &feedback);
     void handleRobotFeedbackFromBasestation(const RobotFeedback &feedback);
     bool sendRobotFeedback(const proto::RobotData &feedback);
