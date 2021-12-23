@@ -96,9 +96,10 @@ void RobotHub::sendCommandsToBasestation(const proto::AICommand &commands, bool 
         command.angularControl = protoCommand.use_angle();
         command.angle = protoCommand.w();
 
+        // TODO: Strategically update robot angle when robot stands still instead of always using camera angle
         if (bot != nullptr) {
             command.useCameraAngle = true;
-            command.cameraAngle = bot->w();
+            command.cameraAngle = bot->angle();
         } else {
             command.useCameraAngle = false;
             command.cameraAngle = 0.0;
