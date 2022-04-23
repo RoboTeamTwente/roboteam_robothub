@@ -81,7 +81,17 @@ void RobotHub::sendCommandsToSimulator(const rtt::RobotCommands &commands, rtt::
             RTT_WARNING("Robot command used absolute angle, but simulator requires angular velocity")
         }
 
-        simCommand.addRobotControlWithGlobalSpeeds(id, kickSpeed, kickAngle, dribblerSpeed, xVelocity, yVelocity, angularVelocity);
+//        simCommand.addRobotControlWithGlobalSpeeds(id, kickSpeed, kickAngle, dribblerSpeed, xVelocity, yVelocity, angularVelocity);
+
+        float forwardInField = robotCommand.velocity.x;
+        float leftInField = robotCommand.velocity.y;
+
+        Vector2 absVel = robotCommand.velocity;
+        Vector2 relVel = absVel.rotate(robotCommand.cameraAngleOfRobot);
+        float forward = relVel.x;
+        float left = relVel.y;
+
+        simCommand.addRobotControlWithLocalSpeeds(id, kickSpeed, kickAngle, dribblerSpeed, forward, left, angularVelocity);
 
         // Update received commands stats
         this->statistics.incrementCommandsReceivedCounter(id, color);
