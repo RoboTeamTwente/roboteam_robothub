@@ -87,7 +87,7 @@ void RobotHub::sendCommandsToSimulator(const rtt::RobotCommands &commands, rtt::
         float leftInField = robotCommand.velocity.y;
 
         Vector2 absVel = robotCommand.velocity;
-        Vector2 relVel = absVel.rotate(robotCommand.cameraAngleOfRobot);
+        Vector2 relVel = absVel.rotate(-robotCommand.cameraAngleOfRobot);
         float forward = relVel.x;
         float left = relVel.y;
 
