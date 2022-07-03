@@ -12,6 +12,7 @@ constexpr int MAX_AMOUNT_OF_ROBOTS = 16;
 constexpr float MAX_ANGULAR_VELOCITY = 2.0f;
 constexpr float MAX_DRIBBLER_SPEED = 100;
 constexpr float MAX_VELOCITY = 1.0f;
+constexpr double MAX_KICK_SPEED = 3.0;
 constexpr int COMMAND_TRANSMISSION_INTERVAL_MS = 100;
 constexpr int SETTINGS_TRANSMISSION_INTERVAL_MS = 1000;
 
@@ -56,6 +57,7 @@ rtt::Angle targetAngle(0.0);
 double targetAngularVelocity = 0.0;
 bool useDribbler = false;
 bool useAngularVelocity = false;
+bool doKick = false;
 
 void updateCommandValues() {
     auto now = std::chrono::steady_clock::now();
@@ -102,7 +104,7 @@ rtt::RobotCommand createCommandForRobot(int id) {
         .cameraAngleOfRobot = 0.0,
         .cameraAngleOfRobotIsSet = false,
 
-        .kickSpeed = 0.0,
+        .kickSpeed = doKick ? MAX_KICK_SPEED : 0.0,
         .waitForBall = false,
         .kickType = rtt::KickType::NO_KICK,
 
@@ -134,7 +136,9 @@ void runCommandSending() {
     shouldSendRobotCommands = true;
 
     while (shouldSendRobotCommands) {
+        bool commandsContainKick = doKick;
         auto commands = getRobotCommandsForTeam();
+        if (commandsContainKick) doKick = false;
 
         if (currentTeam == Team::BLUE) {
             commandsPublisherBlue.publish(commands);
@@ -275,6 +279,7 @@ bool handleCommand(std::string cmd) {
         currentRotation = Rotation::NO_ROTATION;
     } else if (cmd == "ANGVEL") {
         useAngularVelocity = !useAngularVelocity;
+        std::cout << "Using angular velocity: " << std::boolalpha << useAngularVelocity << std::endl;
     } else if (cmd == "FORWARD") {
         currentMovement = Movement::FORWARD;
     } else if (cmd == "BACKWARD") {
@@ -293,7 +298,11 @@ bool handleCommand(std::string cmd) {
         currentMovement = Movement::STILL;
     } else if (cmd == "DRIBBLE") {
         useDribbler = !useDribbler;
+        std::cout << "Turned dribbler: " << std::boolalpha << useDribbler << std::endl;
         return false;
+    } else if (cmd == "KICK") {
+        doKick = true;
+        std::cout << "Sending single kick command" << std::endl;
     } else if (cmd == "STOP") {
         shouldSendSettings = false;
         shouldSendRobotCommands = false;
