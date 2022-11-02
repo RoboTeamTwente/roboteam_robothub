@@ -3,23 +3,19 @@ project(roboteam_robothub)
 
 # for MacOS X or iOS, watchOS, tvOS (since 3.10.3)
 if(APPLE)
-    set(Qt5Network_DIR "/usr/local/opt/qt/lib/cmake/Qt5Network")
+        set(Qt5Network_DIR "/usr/local/opt/qt/lib/cmake/Qt5Network")
 endif()
 
 # for Linux, BSD, Solaris, Minix
 if(UNIX AND NOT APPLE)
-    SET(Qt5Network_DIR "/usr/include/x86_64-linux-gnu/qt5/Qt5Network")
+        SET(Qt5Network_DIR "/usr/include/x86_64-linux-gnu/qt5/Qt5Network")
 endif()
-
-find_package(Qt5Network REQUIRED)
 
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package(Threads REQUIRED)
 
-# Generate the proto files for the simulator manager
-find_package(Protobuf 3.9.1 REQUIRED)
-add_subdirectory(simulation_proto)
+add_subdirectory(simulation_proto/proto)
 
 # Create the make file for the simulatorManager library
 add_library(simulator_manager STATIC
@@ -30,6 +26,7 @@ target_include_directories(simulator_manager PUBLIC "include")
 target_link_libraries(simulator_manager PUBLIC
         simulation_manager_proto
         Qt5::Network
+        libusb::libusb
         roboteam_utils
 )
 target_compile_options(simulator_manager PRIVATE "${COMPILER_FLAGS}")
@@ -45,7 +42,7 @@ target_include_directories(basestation_manager PUBLIC
         "roboteam_embedded_messages/include")
 target_link_libraries(basestation_manager PUBLIC
         Threads::Threads
-        lib::usb
+        libusb::libusb
         roboteam_utils
 )
 target_compile_options(basestation_manager PRIVATE "${COMPILER_FLAGS}")
@@ -73,7 +70,7 @@ target_include_directories(roboteam_robothub_enumerate_usb
 )
 target_link_libraries(roboteam_robothub_enumerate_usb
         Threads::Threads
-        lib::usb
+        libusb::libusb
 )
 target_compile_options(roboteam_robothub_enumerate_usb PRIVATE "${COMPILER_FLAGS}")
 
@@ -94,6 +91,8 @@ target_compile_options(roboteam_robothub_robotMonitor PRIVATE "${COMPILER_FLAGS}
 # Create make file for simulation formation test
 add_executable(roboteam_robothub_formation
         scripts/sendFormationToSimulator.cpp
-        )
-target_link_libraries(roboteam_robothub_formation PUBLIC simulator_manager)
+)
+target_link_libraries(roboteam_robothub_formation PUBLIC simulator_manager
+        libusb::libusb
+)
 target_compile_options(roboteam_robothub_formation PRIVATE "${COMPILER_FLAGS}")
